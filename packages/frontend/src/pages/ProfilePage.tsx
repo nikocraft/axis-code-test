@@ -1,5 +1,5 @@
 import { 
-  Button,
+  // Button,
   Card,
   CardHeader,
   Text,
@@ -9,24 +9,24 @@ import {
   TableCell,
   TableBody } from "@fluentui/react-components"
 import { makeStyles } from "@fluentui/react-components"
-import { useAuth } from '../context/AuthContext'
-import { useNavigate } from 'react-router-dom'
 import { useQuery } from 'urql'
 import { ME_QUERY, MeQuery } from '../graphql/queries'
+import { useEffect } from 'react'
+import { useLocation } from 'react-router-dom'
 
 const useClasses = makeStyles({
   profilePage: {
     display: 'flex',
     flexDirection: 'column',
-    alignItems: 'center',
-    padding: '10px 20px 25px 20px',
+    // alignItems: 'center',
+    padding: '0px 0px 25px 0px',
   },
   container: {
     display: 'flex',
     flexDirection: 'column',
     gap: '20px',
-    padding: '20px',
-    maxWidth: '600px',
+    // padding: '20px',
+    maxWidth: '700px',
   },
   card: {
     padding: '20px',
@@ -54,12 +54,17 @@ const useClasses = makeStyles({
 })
 
 const ProfilePage = () => {
-  const navigate = useNavigate()
   const classes = useClasses()
-  const [result] = useQuery<MeQuery>({ query: ME_QUERY })
-  const { deleteAuthToken } = useAuth()
-
+  const [result, reexecuteQuery] = useQuery<MeQuery>({ 
+    query: ME_QUERY,
+  })
   const { data, fetching, error } = result
+
+  const location = useLocation()
+
+  useEffect(() => {
+    reexecuteQuery({ requestPolicy: 'network-only' });
+  }, [location]);
 
   // keeping this part really simple...
   if (fetching) return <Text>Loading User Data...</Text>
@@ -69,14 +74,9 @@ const ProfilePage = () => {
 
   if (!user) return <Text>No user data available</Text>
 
-  const handleLogout = () => {
-    deleteAuthToken()
-    navigate('/auth')
-  }
-
   return (
     <div className={classes.profilePage}>
-      <h2>My Profile Page</h2>
+      <h2>My Profile</h2>
 
       <div className={classes.container}>
         <Card className={classes.card}>
@@ -92,7 +92,7 @@ const ProfilePage = () => {
         <Card className={classes.card}>
           <CardHeader 
             header={
-            <Text weight="semibold" size={500}>Cameras</Text>
+            <Text weight="semibold" size={500}>My Cameras</Text>
             }
           />
           <Table className={classes.table}>
@@ -114,7 +114,6 @@ const ProfilePage = () => {
             </TableBody>
           </Table>
         </Card>
-        <Button onClick={handleLogout} className={classes.button}>Log Me Out</Button>
       </div>
     </div>
   )

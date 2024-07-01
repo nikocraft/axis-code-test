@@ -3,7 +3,10 @@ import { FluentProvider, teamsLightTheme } from "@fluentui/react-components"
 import { useAuth } from './context/AuthContext'
 import AuthPage from './pages/AuthPage'
 import ProfilePage from './pages/ProfilePage'
+import CamerasPage from './pages/CamerasPage'
+import MainLayout from './layouts/MainLayout'
 import './App.css'
+
 
 function App() {
   const { isAuthenticated } = useAuth()
@@ -19,10 +22,16 @@ function App() {
             <Route 
               path="/auth" 
               element={isAuthenticated ? <Navigate to="/profile" /> : <AuthPage />} />
-            <Route
-              path="/profile"
-              element={isAuthenticated ? <ProfilePage /> : <Navigate to="/auth" />}
-            />
+            <Route element={<MainLayout />}>
+              <Route
+                path="/profile"
+                element={isAuthenticated ? <ProfilePage /> : <Navigate to="/auth" />}
+              />
+              <Route
+                path="/cameras"
+                element={isAuthenticated ? <CamerasPage /> : <Navigate to="/auth" />}
+              />
+            </Route>
           </Routes>
         </Router>
     </FluentProvider>
