@@ -17,7 +17,7 @@ const typeDefinition = /* GraphQL */ `
         addCamera(name: String!, niceName: String, address: String!): Camera!
         assignCameraToUser(cameraId: ID!, userId: ID!): User!
         removeCameraFromUser(cameraId: ID!, userId: ID!): User!
-        login(email: String!, password: String!): AuthPayload
+        login(email: String!, password: String!): AuthPayload!
     }
 
     type AuthPayload {
@@ -170,6 +170,10 @@ const resolvers = {
         name: (parent: Camera) => parent.name,
         niceName: (parent: Camera) => parent.niceName,
         address: (parent: Camera) => parent.address
+    },
+    User: {
+        id: (parent: User) => parent.id,
+        name: (parent: User) => parent.name
     }
 }
 
