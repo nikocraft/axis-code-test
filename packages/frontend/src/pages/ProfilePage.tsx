@@ -1,4 +1,5 @@
 import { 
+  Button,
   Card,
   CardHeader,
   Text,
@@ -25,7 +26,7 @@ const useClasses = makeStyles({
     flexDirection: 'column',
     gap: '20px',
     padding: '20px',
-    maxWidth: '800px',
+    maxWidth: '600px',
   },
   card: {
     padding: '20px',
@@ -33,9 +34,23 @@ const useClasses = makeStyles({
   table: {
     width: '100%',
   },
-  text: {
+  userText: {
+    fontSize: '11px',
+  },
+  tableText: {
     fontSize: '12px',
-  }
+  },
+  button: {
+    padding: '8px',
+    marginTop: '5px',
+    borderRadius: '8px',
+    backgroundColor: 'black',
+    color: 'white',
+    ':hover': {
+      backgroundColor: '#222',
+      color: 'white',
+    }
+  },
 })
 
 const ProfilePage = () => {
@@ -70,8 +85,8 @@ const ProfilePage = () => {
               <Text weight="semibold" size={500}>User Info</Text>
             } 
           />
-          <Text className={classes.text}>Name: {user.name}</Text>
-          <Text className={classes.text}>Email: {user.email}</Text>
+          <Text className={classes.userText}>Name: {user.name}</Text>
+          <Text className={classes.userText}>Email: {user.email}</Text>
         </Card>
 
         <Card className={classes.card}>
@@ -91,15 +106,15 @@ const ProfilePage = () => {
             <TableBody>
               {user.cameras.map((camera) => (
                 <TableRow key={camera.id}>
-                  <TableCell>{camera.name}</TableCell>
-                  <TableCell>{camera.niceName}</TableCell>
-                  <TableCell>{camera.address}</TableCell>
+                  <TableCell className={classes.tableText}>{camera.name}</TableCell>
+                  <TableCell className={classes.tableText}>{camera.niceName}</TableCell>
+                  <TableCell className={classes.tableText}>{camera.address}</TableCell>
                 </TableRow>
               ))}
             </TableBody>
           </Table>
         </Card>
-        <button onClick={handleLogout}>Log Me Out</button>
+        <Button onClick={handleLogout} className={classes.button}>Log Me Out</Button>
       </div>
     </div>
   )
