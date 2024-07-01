@@ -104,10 +104,6 @@ const resolvers = {
         cameras: () => cameras,
         users: () => users,
         me: (parent: unknown, args: unknown, context: UserContext) => {
-            if(!context.currentUser) {
-                return null
-            }
-
             return context.currentUser
         }
     },
