@@ -1,5 +1,4 @@
 import { 
-  // Button,
   Card,
   CardHeader,
   Text,
@@ -55,16 +54,10 @@ const useClasses = makeStyles({
 
 const ProfilePage = () => {
   const classes = useClasses()
-  const [result, reexecuteQuery] = useQuery<MeQuery>({ 
+  const [result] = useQuery<MeQuery>({ 
     query: ME_QUERY,
   })
   const { data, fetching, error } = result
-
-  const location = useLocation()
-
-  useEffect(() => {
-    reexecuteQuery({ requestPolicy: 'network-only' });
-  }, [location]);
 
   // keeping this part really simple...
   if (fetching) return <Text>Loading User Data...</Text>

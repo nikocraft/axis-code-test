@@ -2,12 +2,12 @@ import React from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './App.tsx'
 import './index.css'
-import { Provider, Client, cacheExchange, fetchExchange } from 'urql'
+import { Provider, Client, fetchExchange } from 'urql'
 import { AuthProvider } from './context/AuthContext'
 
 const client = new Client({
   url: 'http://localhost:4000/graphql',
-  exchanges: [cacheExchange, fetchExchange],
+  exchanges: [fetchExchange],
   fetchOptions: () => {
     const token = localStorage.getItem('token')
     return {
