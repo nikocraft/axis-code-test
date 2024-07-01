@@ -1,4 +1,3 @@
-// src/components/AuthenticatedLayout.tsx
 import { Outlet, Link, useNavigate } from 'react-router-dom'
 import { Button, makeStyles, tokens } from '@fluentui/react-components'
 import { useAuth } from '../context/AuthContext'
