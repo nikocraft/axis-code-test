@@ -38,3 +38,23 @@ export const ME_QUERY = gql`
     }
   }
 `
+
+export interface AllCamerasQuery {
+  cameras: {
+    id: string
+    name: string
+    niceName?: string
+    address: string
+  }[]
+}
+
+export const ALL_CAMERAS_QUERY = gql`
+  query AllCameras {
+    cameras {
+      id
+      name
+      niceName
+      address
+    }
+  }
+`
