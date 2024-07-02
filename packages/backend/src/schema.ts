@@ -138,7 +138,7 @@ const cameras: Camera[] = [
     {
         id: '13',
         name: 'I8307-VE',
-        niceName: "Back Camera 2",
+        niceName: "Back Camera 8",
         address: '192.168.1.111',
     },
     {
@@ -149,7 +149,7 @@ const cameras: Camera[] = [
     {
         id: '15',
         name: 'A8207-VE MKII',
-        niceName: "Front Camera 2",
+        niceName: "Front Camera 9",
         address: '192.168.1.113',
     },
     {
