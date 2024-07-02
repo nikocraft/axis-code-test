@@ -39,7 +39,16 @@ export const ME_QUERY = gql`
   }
 `
 
-export interface AllCamerasQuery {
+export const CAMERA_FRAGMENT = gql`
+  fragment CameraFields on Camera {
+    id
+    name
+    niceName
+    address
+  }
+`
+
+export interface CamerasQuery {
   cameras: {
     id: string
     name: string
@@ -48,15 +57,45 @@ export interface AllCamerasQuery {
   }[]
 }
 
-export const ALL_CAMERAS_QUERY = gql`
-  query AllCameras {
+export const CAMERAS_QUERY = gql`
+  query Cameras {
     cameras {
-      id
-      name
-      niceName
-      address
+      ...CameraFields
     }
   }
+`
+
+export const ME_MINIMAL_FRAGMENT = gql`
+  fragment MeMinimal on User {
+    id
+    cameras {
+      id
+    }
+  }
+`
+
+export interface CombinedQuery {
+  cameras: CamerasQuery['cameras']
+  me: {
+    id: string
+    cameras: {
+      id: string
+    }[]
+  }
+}
+
+export const COMBINED_QUERY = gql`
+  query CombinedQuery {
+    cameras {
+      ...CameraFields
+    }
+    me {
+      ...MeMinimal
+    }
+  }
+
+  ${CAMERA_FRAGMENT}
+  ${ME_MINIMAL_FRAGMENT}
 `
 
 export interface AssignCameraToMeMutation {
@@ -64,9 +103,6 @@ export interface AssignCameraToMeMutation {
     id: string
     cameras: {
       id: string
-      name: string
-      niceName?: string
-      address: string
     }[]
   }
 }
@@ -77,9 +113,26 @@ export const ASSIGN_CAMERA_TO_ME_MUTATION = gql`
       id
       cameras {
         id
-        name
-        niceName
-        address
+      }
+    }
+  }
+`
+
+export interface UnassignCameraFromMeMutation {
+  unassignCameraFromMe: {
+    id: string
+    cameras: {
+      id: string
+    }[]
+  }
+}
+
+export const UNASSIGN_CAMERA_FROM_ME_MUTATION = gql`
+  mutation UnassignCameraFromMe($cameraId: ID!) {
+    unassignCameraFromMe(cameraId: $cameraId) {
+      id
+      cameras {
+        id
       }
     }
   }
