@@ -1,9 +1,11 @@
 import { useQuery, useMutation } from 'urql'
 import { 
-  ALL_CAMERAS_QUERY,
-  AllCamerasQuery,
+  COMBINED_QUERY, 
+  CombinedQuery,
   ASSIGN_CAMERA_TO_ME_MUTATION,
-  AssignCameraToMeMutation
+  AssignCameraToMeMutation,
+  UNASSIGN_CAMERA_FROM_ME_MUTATION,
+  UnassignCameraFromMeMutation
 } from '../graphql/queries'
 import { Card, Text, Button, makeStyles } from "@fluentui/react-components"
 
@@ -44,21 +46,35 @@ const useClasses = makeStyles({
 
 const CamerasPage = () => {
   const classes = useClasses()
-  const [result] = useQuery<AllCamerasQuery>({ query: ALL_CAMERAS_QUERY })
+  const [result, reexecuteCombinedQuery] = useQuery<CombinedQuery>({ query: COMBINED_QUERY })
   const [assignResult, assignCameraToMe] = useMutation<AssignCameraToMeMutation>(ASSIGN_CAMERA_TO_ME_MUTATION)
+  const [unassignResult, unassignCameraFromMe] = useMutation<UnassignCameraFromMeMutation>(UNASSIGN_CAMERA_FROM_ME_MUTATION)
 
   const { data, fetching, error } = result
-  
-  // keeping this part simple...
+
   if (fetching) return <p>Loading...</p>
-  if (error) return <p>Oh no... {error.message}</p>
+  if (error) return <p>Error: {error.message}</p>
+
+  const assignedCameraIds = new Set(data?.me.cameras.map(camera => camera.id))
 
 
   const handleAssign = async (cameraId: string) => {
     try {
       await assignCameraToMe({ cameraId })
+      reexecuteCombinedQuery()
     } catch (error) {
       console.error('Failed to assign camera:', error)
+    }
+  }
+
+  const handleUnassign = async (cameraId: string) => {
+    try {
+      await unassignCameraFromMe({ cameraId })
+      // Refetch query to update the UI
+      reexecuteCombinedQuery()
+    } catch (err) {
+      console.error('Failed to unassign camera:', err)
+      // Handle error (e.g., show an error message to the user)
     }
   }
 
@@ -66,18 +82,28 @@ const CamerasPage = () => {
     <div>
       <h2>All Cameras</h2>
       <div className={classes.container}>
-        {data?.cameras.map((camera) => (
-          <Card key={camera.id} className={classes.card}>
-            <div className={classes.cardContent}>
-              <Text className={classes.cameraName}>camera: {camera.name}</Text>
-              <Text className={classes.niceName}>{camera.niceName || 'No nice name'}</Text>
-              <Text className={classes.address}>ip: {camera.address}</Text>
-              <div className={classes.buttonContainer}>
-                <Button onClick={() => handleAssign(camera.id)} disabled={assignResult.fetching}>{assignResult.fetching ? 'Assigning...' : 'Assign to Me'}</Button>
+        {data?.cameras.map((camera) => {
+          const isAssigned = assignedCameraIds.has(camera.id)
+          return (
+            <Card key={camera.id} className={classes.card}>
+              <div className={classes.cardContent}>
+                <Text className={classes.cameraName}>camera: {camera.name}</Text>
+                <Text className={classes.niceName}>{camera.niceName || 'No nice name'}</Text>
+                <Text className={classes.address}>ip: {camera.address}</Text>
+                <div className={classes.buttonContainer}>
+                  <Button 
+                    onClick={() => isAssigned ? handleUnassign(camera.id) : handleAssign(camera.id)} 
+                    disabled={assignResult.fetching || unassignResult.fetching}
+                  >
+                    {assignResult.fetching || unassignResult.fetching 
+                      ? 'Processing...' 
+                      : isAssigned ? 'Unsubscribe' : 'Subscribe to'}
+                    </Button>
+                </div>
               </div>
-            </div>
-          </Card>
-        ))}
+            </Card>
+          )
+        })}
       </div>
     </div>
   )
