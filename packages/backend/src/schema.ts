@@ -258,11 +258,11 @@ const resolvers = {
             const camera = cameras.find(camera => camera.id === args.cameraId)
 
             if (!user || !camera) {
-                return new GraphQLError('User or Camera not found')
+                throw new GraphQLError('User or Camera not found')
             }
 
             if(user.cameras.some(assignedCamera => assignedCamera.id === args.cameraId) ) {
-                return new GraphQLError('Camera already assigned to user')
+                throw new GraphQLError('Camera already assigned to user')
             }
 
             user.cameras.push(camera)
