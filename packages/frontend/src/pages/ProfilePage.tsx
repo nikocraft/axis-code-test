@@ -57,7 +57,11 @@ const ProfilePage = () => {
 
   // keeping this part simple...
   if (fetching) return <Text>Loading User Data...</Text>
-  if (error) return <Text>Oh no! Error: {error.message}</Text>
+
+  if (error) {
+    const errorMessage = error.graphQLErrors[0]?.message || error.message
+    return <p>Oh no! Error: {errorMessage}</p>
+  }
 
   const user = data?.me
 
