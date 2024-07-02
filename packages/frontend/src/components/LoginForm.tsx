@@ -23,6 +23,9 @@ const useClasses = makeStyles({
     backgroundColor: '#2461e1',
     ':hover': {
       backgroundColor: '#3a6cef',
+    },
+    ':hover:active': {
+      backgroundColor: '#4472f6',
     }
   },
   errorMessage: {
