@@ -10,8 +10,6 @@ import {
 import { makeStyles } from "@fluentui/react-components"
 import { useQuery } from 'urql'
 import { ME_QUERY, MeQuery } from '../graphql/queries'
-import { useEffect } from 'react'
-import { useLocation } from 'react-router-dom'
 
 const useClasses = makeStyles({
   profilePage: {
@@ -54,12 +52,10 @@ const useClasses = makeStyles({
 
 const ProfilePage = () => {
   const classes = useClasses()
-  const [result] = useQuery<MeQuery>({ 
-    query: ME_QUERY,
-  })
+  const [result] = useQuery<MeQuery>({ query: ME_QUERY })
   const { data, fetching, error } = result
 
-  // keeping this part really simple...
+  // keeping this part simple...
   if (fetching) return <Text>Loading User Data...</Text>
   if (error) return <Text>Oh no! Error: {error.message}</Text>
 
@@ -75,7 +71,7 @@ const ProfilePage = () => {
         <Card className={classes.card}>
           <CardHeader 
             header={
-              <Text weight="semibold" size={500}>User Info</Text>
+              <Text weight="semibold" size={500}>Account Info</Text>
             } 
           />
           <Text className={classes.userText}>Name: {user.name}</Text>
