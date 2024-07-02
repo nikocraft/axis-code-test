@@ -58,3 +58,29 @@ export const ALL_CAMERAS_QUERY = gql`
     }
   }
 `
+
+export interface AssignCameraToMeMutation {
+  assignCameraToMe: {
+    id: string
+    cameras: {
+      id: string
+      name: string
+      niceName?: string
+      address: string
+    }[]
+  }
+}
+
+export const ASSIGN_CAMERA_TO_ME_MUTATION = gql`
+  mutation AssignCameraToMe($cameraId: ID!) {
+    assignCameraToMe(cameraId: $cameraId) {
+      id
+      cameras {
+        id
+        name
+        niceName
+        address
+      }
+    }
+  }
+`

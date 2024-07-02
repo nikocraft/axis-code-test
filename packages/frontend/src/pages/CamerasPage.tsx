@@ -1,5 +1,10 @@
-import { useQuery } from 'urql'
-import { ALL_CAMERAS_QUERY, AllCamerasQuery } from '../graphql/queries'
+import { useQuery, useMutation } from 'urql'
+import { 
+  ALL_CAMERAS_QUERY,
+  AllCamerasQuery,
+  ASSIGN_CAMERA_TO_ME_MUTATION,
+  AssignCameraToMeMutation
+} from '../graphql/queries'
 import { Card, Text, Button, makeStyles } from "@fluentui/react-components"
 
 const useClasses = makeStyles({
@@ -40,11 +45,22 @@ const useClasses = makeStyles({
 const CamerasPage = () => {
   const classes = useClasses()
   const [result] = useQuery<AllCamerasQuery>({ query: ALL_CAMERAS_QUERY })
+  const [assignResult, assignCameraToMe] = useMutation<AssignCameraToMeMutation>(ASSIGN_CAMERA_TO_ME_MUTATION)
+
   const { data, fetching, error } = result
   
   // keeping this part simple...
   if (fetching) return <p>Loading...</p>
   if (error) return <p>Oh no... {error.message}</p>
+
+
+  const handleAssign = async (cameraId: string) => {
+    try {
+      await assignCameraToMe({ cameraId })
+    } catch (error) {
+      console.error('Failed to assign camera:', error)
+    }
+  }
 
   return (
     <div>
@@ -57,7 +73,7 @@ const CamerasPage = () => {
               <Text className={classes.niceName}>{camera.niceName || 'No nice name'}</Text>
               <Text className={classes.address}>ip: {camera.address}</Text>
               <div className={classes.buttonContainer}>
-                <Button>Assign to Me</Button>
+                <Button onClick={() => handleAssign(camera.id)} disabled={assignResult.fetching}>{assignResult.fetching ? 'Assigning...' : 'Assign to Me'}</Button>
               </div>
             </div>
           </Card>
