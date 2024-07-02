@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react'
 import { useQuery, useMutation } from 'urql'
 import { 
   COMBINED_QUERY, 
@@ -5,7 +6,7 @@ import {
   ASSIGN_CAMERA_TO_ME_MUTATION,
   AssignCameraToMeMutation,
   UNASSIGN_CAMERA_FROM_ME_MUTATION,
-  UnassignCameraFromMeMutation
+  UnassignCameraFromMeMutation,
 } from '../graphql/queries'
 import { Card, Text, Button, makeStyles } from "@fluentui/react-components"
 
@@ -46,35 +47,50 @@ const useClasses = makeStyles({
 
 const CamerasPage = () => {
   const classes = useClasses()
-  const [result, reexecuteCombinedQuery] = useQuery<CombinedQuery>({ query: COMBINED_QUERY })
-  const [assignResult, assignCameraToMe] = useMutation<AssignCameraToMeMutation>(ASSIGN_CAMERA_TO_ME_MUTATION)
-  const [unassignResult, unassignCameraFromMe] = useMutation<UnassignCameraFromMeMutation>(UNASSIGN_CAMERA_FROM_ME_MUTATION)
+  const [{ data, fetching, error }] = useQuery<CombinedQuery>({ query: COMBINED_QUERY })
+  const [, assignCameraToMe] = useMutation<AssignCameraToMeMutation>(ASSIGN_CAMERA_TO_ME_MUTATION)
+  const [, unassignCameraFromMe] = useMutation<UnassignCameraFromMeMutation>(UNASSIGN_CAMERA_FROM_ME_MUTATION)
+  const [assignedCameraIds, setAssignedCameraIds] = useState<Set<string>>(new Set())
+  const [processingCameraId, setProcessingCameraId] = useState<string | null>(null)
 
-  const { data, fetching, error } = result
+  useEffect(() => {
+    if (data?.me) {
+      setAssignedCameraIds(new Set(data.me.cameras.map(camera => camera.id)))
+    }
+  }, [data])
 
   if (fetching) return <p>Loading...</p>
-  if (error) return <p>Error: {error.message}</p>
 
-  const assignedCameraIds = new Set(data?.me.cameras.map(camera => camera.id))
-
+  if (error) {
+    const errorMessage = error.graphQLErrors[0]?.message || error.message
+    return <p>Oh no! Error: {errorMessage}</p>
+  }
 
   const handleAssign = async (cameraId: string) => {
+    setProcessingCameraId(cameraId)
     try {
-      await assignCameraToMe({ cameraId })
-      reexecuteCombinedQuery()
+      const result = await assignCameraToMe({ cameraId })
+      if (result.data) {
+        setAssignedCameraIds(new Set(result.data.assignCameraToMe.cameras.map(camera => camera.id)))
+      }
     } catch (error) {
       console.error('Failed to assign camera:', error)
+    } finally {
+      setProcessingCameraId(null)
     }
   }
 
   const handleUnassign = async (cameraId: string) => {
+    setProcessingCameraId(cameraId)
     try {
-      await unassignCameraFromMe({ cameraId })
-      // Refetch query to update the UI
-      reexecuteCombinedQuery()
+      const result = await unassignCameraFromMe({ cameraId })
+      if (result.data) {
+        setAssignedCameraIds(new Set(result.data.unassignCameraFromMe.cameras.map(camera => camera.id)))
+      }
     } catch (err) {
       console.error('Failed to unassign camera:', err)
-      // Handle error (e.g., show an error message to the user)
+    } finally {
+      setProcessingCameraId(null)
     }
   }
 
@@ -84,8 +100,9 @@ const CamerasPage = () => {
       <div className={classes.container}>
         {data?.cameras.map((camera) => {
           const isAssigned = assignedCameraIds.has(camera.id)
+          const isLoading = processingCameraId === camera.id
           return (
-            <Card key={camera.id} className={classes.card}>
+            <Card key={`camera-${camera.id}`} className={classes.card}>
               <div className={classes.cardContent}>
                 <Text className={classes.cameraName}>camera: {camera.name}</Text>
                 <Text className={classes.niceName}>{camera.niceName || 'No nice name'}</Text>
@@ -93,11 +110,14 @@ const CamerasPage = () => {
                 <div className={classes.buttonContainer}>
                   <Button 
                     onClick={() => isAssigned ? handleUnassign(camera.id) : handleAssign(camera.id)} 
-                    disabled={assignResult.fetching || unassignResult.fetching}
+                    disabled={isLoading}
                   >
-                    {assignResult.fetching || unassignResult.fetching 
-                      ? 'Processing...' 
-                      : isAssigned ? 'Unsubscribe' : 'Subscribe to'}
+                    {isLoading 
+                      ? 'Saving...' 
+                      : isAssigned 
+                        ? 'Unassign Me' 
+                        : 'Assign to Me'
+                    }
                     </Button>
                 </div>
               </div>
