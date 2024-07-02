@@ -3,7 +3,7 @@ import LoginForm from '../components/LoginForm'
 import { useMutation } from 'urql'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
-import { LOGIN_MUTATION } from '../graphql/queries'
+import { LoginMutation, LOGIN_MUTATION } from '../graphql/queries'
 
 const useClasses = makeStyles({
   authPage: {
@@ -13,7 +13,7 @@ const useClasses = makeStyles({
     justifyContent: 'center',
     minHeight: '100vh',
     minWidth: '100vw',
-    backgroundColor: '#2461e1'
+    backgroundColor: '#141414',
   },
   card: {
     margin: "auto",
@@ -25,7 +25,7 @@ const useClasses = makeStyles({
 const AuthPage = () => {
   const classes = useClasses()
   const navigate = useNavigate()
-  const [, loginMutation] = useMutation(LOGIN_MUTATION)
+  const [, loginMutation] = useMutation<LoginMutation>(LOGIN_MUTATION)
   const { saveAuthToken } = useAuth()
 
   const handleLogin = async (email: string, password: string): Promise<{ success: boolean; error?: string }> => {

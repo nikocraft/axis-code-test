@@ -3,6 +3,9 @@ import { Button, makeStyles, tokens } from '@fluentui/react-components'
 import { useAuth } from '../context/AuthContext'
 
 const useStyles = makeStyles({
+  appContainer: {
+    marginTop: '50px',
+  },
   navbar: {
     display: 'flex',
     justifyContent: 'space-between',
@@ -49,7 +52,7 @@ const MainLayout = () => {
   }
 
   return (
-    <div>
+    <div className={styles.appContainer}>
       <nav className={styles.navbar}>
         <div className={styles.navLinks}>
           <Link className={styles.navLink} to="/cameras">Cameras</Link>

@@ -20,6 +20,10 @@ const useClasses = makeStyles({
   button: {
     padding: '8px',
     marginTop: '5px',
+    backgroundColor: '#2461e1',
+    ':hover': {
+      backgroundColor: '#3a6cef',
+    }
   },
   errorMessage: {
     color: '#f22233',
@@ -36,8 +40,8 @@ interface LoginFormProps {
 
 const LoginForm = ({ onLogin }: LoginFormProps) => {
   const classes = useClasses()
-  const [email, setEmail] = useState('user1@gmail.com') // set user for easier testing of the app
-  const [password, setPassword] = useState('password1234!') // set pass for easier testing of the app
+  const [email, setEmail] = useState('user1@gmail.com') // I've set default dummy user for quick login while developing and testing the app
+  const [password, setPassword] = useState('password1234!') // same here
   const [errorMessage, setErrorMessage] = useState('')
 
   const handleSubmit = async (e: React.FormEvent) => {
