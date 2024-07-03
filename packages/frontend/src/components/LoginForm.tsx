@@ -49,10 +49,17 @@ const LoginForm = ({ onLogin }: LoginFormProps) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    setErrorMessage('')
+
     const result = await onLogin(email, password)
     if (!result.success) {
       setErrorMessage(result.error || 'Login failed')
     }
+  }
+
+  const handleInputChange = (setter: React.Dispatch<React.SetStateAction<string>>) => (e: React.ChangeEvent<HTMLInputElement>) => {
+    setter(e.target.value)
+    setErrorMessage('')
   }
 
   return (
@@ -62,7 +69,7 @@ const LoginForm = ({ onLogin }: LoginFormProps) => {
         <Input
           type="email"
           value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          onChange={handleInputChange(setEmail)}
           placeholder="Email"
           required
           className={classes.input}
@@ -70,7 +77,7 @@ const LoginForm = ({ onLogin }: LoginFormProps) => {
         <Input
           type="password"
           value={password}
-          onChange={(e) => setPassword(e.target.value)}
+          onChange={handleInputChange(setPassword)}
           placeholder="Password"
           required
           className={classes.input}

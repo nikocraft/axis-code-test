@@ -1,6 +1,5 @@
 import { 
   Card,
-  CardHeader,
   Text,
   Table,
   TableHeader,
@@ -73,21 +72,14 @@ const ProfilePage = () => {
 
       <div className={classes.container}>
         <Card className={classes.card}>
-          <CardHeader 
-            header={
-              <Text weight="semibold" size={500}>Account Info</Text>
-            } 
-          />
+          <Text weight="semibold" size={500}>Account Info</Text>
           <Text className={classes.userText}>Name: {user.name}</Text>
           <Text className={classes.userText}>Email: {user.email}</Text>
         </Card>
 
         <Card className={classes.card}>
-          <CardHeader 
-            header={
-            <Text weight="semibold" size={500}>My Cameras</Text>
-            }
-          />
+          <Text weight="semibold" size={500}>My Cameras</Text>
+ 
           <Table className={classes.table}>
             <TableHeader>
               <TableRow>
