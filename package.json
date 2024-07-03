@@ -7,6 +7,7 @@
     "start:backend": "npm run dev -w=backend",
     "start:frontend": "npm run dev -w=frontend",
     "dev": "concurrently \"npm:start:*\"",
+    "test": "npm test -w=frontend",
     "lint": "prettier . --check"
   },
   "workspaces": [
