@@ -7,6 +7,6 @@ export type UserContext = {
   currentUser: User | null
 }
  
-export async function createContext(initialContext: YogaInitialContext): Promise<UserContext> {
+export async function createUserContext(initialContext: YogaInitialContext): Promise<UserContext> {
   return {currentUser: await authenticateUser(initialContext.request)}
 }

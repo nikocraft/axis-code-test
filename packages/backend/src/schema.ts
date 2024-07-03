@@ -1,7 +1,7 @@
 import { createSchema} from 'graphql-yoga'
 import { GraphQLError } from 'graphql'
 import { APP_KEY } from './config'
-import { UserContext } from './context'
+import { UserContext } from './userContext'
 import jwt from 'jsonwebtoken'
 
 const { sign } = jwt;
