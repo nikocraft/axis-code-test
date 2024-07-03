@@ -1,8 +1,8 @@
-import { Outlet, Link, useNavigate } from 'react-router-dom'
+import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom'
 import { Button, makeStyles, tokens } from '@fluentui/react-components'
 import { useAuth } from '../context/AuthContext'
 
-const useStyles = makeStyles({
+const useClasses = makeStyles({
   appContainer: {
     marginTop: '50px',
   },
@@ -10,25 +10,29 @@ const useStyles = makeStyles({
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
-    padding: '1rem',
+    padding: '16px',
     backgroundColor: '#f0f0f0',
   },
   navLinks: {
     display: 'flex',
-    gap: '1rem',
+    gap: '16px'
   },
   navLink: {
     textDecoration: 'none',
     color: tokens.colorNeutralForeground1,
     fontWeight: tokens.fontWeightSemibold,
     fontSize: tokens.fontSizeBase300,
-    padding: '0.5rem 1rem',
+    padding: '8px 16px',
     borderRadius: tokens.borderRadiusMedium,
     transition: 'all 0.2s ease',
     ':hover': {
-      backgroundColor: "#ccc",
+      backgroundColor: tokens.colorNeutralBackground3Pressed,
       color: tokens.colorNeutralForeground1Hover,
     },
+  },
+  activeNavLink: {
+    backgroundColor: tokens.colorNeutralBackground2Pressed,
+    color: tokens.colorNeutralForeground1Hover,
   },
   container: {
     display: 'flex',
@@ -37,30 +41,32 @@ const useStyles = makeStyles({
     flexDirection: 'column',
     gap: '20px',
     padding: '20px',
-    // maxWidth: '600px',
   },
 })
 
 const MainLayout = () => {
-  const styles = useStyles()
+  const classes = useClasses()
   const navigate = useNavigate()
+  const location = useLocation()
   const { deleteAuthToken } = useAuth()
 
   const handleLogout = () => {
     deleteAuthToken()
     navigate('/auth')
   }
+  
+  const isActive = (path: string) => location.pathname === path
 
   return (
-    <div className={styles.appContainer}>
-      <nav className={styles.navbar}>
-        <div className={styles.navLinks}>
-          <Link className={styles.navLink} to="/cameras">Cameras</Link>
-          <Link className={styles.navLink} to="/profile">Profile</Link>
+    <div className={classes.appContainer}>
+      <nav className={classes.navbar}>
+        <div className={classes.navLinks}>
+          <Link className={`${classes.navLink} ${isActive('/cameras') ? classes.activeNavLink : ''}`} to="/cameras">Cameras</Link>
+          <Link className={`${classes.navLink} ${isActive('/profile') ? classes.activeNavLink : ''}`}  to="/profile">Profile</Link>
         </div>
         <Button onClick={handleLogout}>Logout</Button>
       </nav>
-      <div className={styles.container}>
+      <div className={classes.container}>
         <Outlet />
       </div>
     </div>
