@@ -1,7 +1,5 @@
 import { render, screen } from '@testing-library/react'
-// import userEvent from '@testing-library/user-event'
 import ProfilePage from './ProfilePage'
-import { UseQueryState } from 'urql'
 import { MeQuery } from '../graphql/queries'
 
 jest.mock('urql', () => ({
@@ -9,8 +7,7 @@ jest.mock('urql', () => ({
 }))
 
 jest.mock('../graphql/queries', () => ({
-  ME_QUERY: 'mocked ME_QUERY',
-  MeQuery: {}
+  ME_QUERY: 'mocked ME_QUERY'
 }))
 
 jest.mock('@fluentui/react-components', () => ({
@@ -33,7 +30,6 @@ jest.mock('@fluentui/react-components', () => ({
   }),
 }))
 
-
 const mockUseQuery = jest.requireMock('urql').useQuery
 
 describe('ProfilePage', () => {
@@ -41,7 +37,7 @@ describe('ProfilePage', () => {
     mockUseQuery.mockReturnValue([{ 
       fetching: true,
       stale: false 
-    } as UseQueryState<MeQuery, object>])
+    }])
     render(<ProfilePage />)
     expect(screen.getByText('Loading User Data...')).toBeInTheDocument()
   })
@@ -55,7 +51,7 @@ describe('ProfilePage', () => {
       fetching: false, 
       stale: false,
       error: mockError
-    } as UseQueryState<MeQuery, object>])
+    }])
 
     render(<ProfilePage />)
     expect(screen.getByText('Oh no! Error: Test GraphQL error')).toBeInTheDocument()
@@ -76,7 +72,7 @@ describe('ProfilePage', () => {
       fetching: false, 
       stale: false,
       data: mockData
-    } as UseQueryState<MeQuery, object>])
+    }])
     render(<ProfilePage />)
 
     expect(screen.getByText('My Profile')).toBeInTheDocument()
@@ -91,5 +87,4 @@ describe('ProfilePage', () => {
     expect(screen.getByText('Bedroom')).toBeInTheDocument()
     expect(screen.getByText('192.168.1.101')).toBeInTheDocument()
   })
-
 })
